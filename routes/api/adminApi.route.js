@@ -4,6 +4,9 @@ import departmentApi from "../../controller/api/departmentApi.controller.js";
 import empApi from "../../controller/api/empApi.controller.js";
 import hrApi from "../../controller/api/hrApi.controller.js";
 import adminApi from "../../controller/api/adminApi.controller.js";
+import authApi from "../../controller/api/authApi.controller.js";
+import userAuth from "../../middlewares/userAuth.js";
+import taskApi from "../../controller/api/taskApi.controller.js";
 
 const adminApiRouter =Router()
 //Admin API
@@ -28,6 +31,31 @@ adminApiRouter.delete('/departments/:id',departmentApi.deleteDepartment)//delete
 adminApiRouter.patch('/department/:id',departmentApi.editDepartment)//edit department
 
 //Authentication API
-adminApiRouter.get('/login',adminApi.login)
+adminApiRouter.post('/auth/login',authApi.login)
+adminApiRouter.post('/auth/logout',authApi.logout)
+adminApiRouter.post("/auth/forgot-password", authApi.forgotPassword);
+adminApiRouter.post("/auth/reset-password", authApi.resetPassword);
+adminApiRouter.get("/auth/profile", userAuth, authApi.profile);
+
+// Task API
+adminApiRouter.post("/task/create", taskApi.createTask);
+
+// Assign Task
+adminApiRouter.post("/task/assign", taskApi.assignTask);
+
+// Get All Tasks
+adminApiRouter.get("/task/all", taskApi.getAllTasks);
+
+// Get Single Task
+adminApiRouter.get("/task/:id", taskApi.getSingleTask);
+
+// Edit Task
+adminApiRouter.put("/task/edit/:id", taskApi.editTask);
+
+// Delete Task
+adminApiRouter.delete("/task/delete/:id", taskApi.deleteTask);
+
+// Update Status
+adminApiRouter.put("/task/status/:id", taskApi.updateTaskStatus);
 
 export default adminApiRouter

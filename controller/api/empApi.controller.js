@@ -6,10 +6,18 @@ const empApi = {
             const { password } = req.body
             req.body.password = await bcrypt.hash(password, 10)
             req.body.role = 'employee'
-            const user = await User.create(req.body)
-            return res.json(user);
-        } catch (error) {
-            return res.json({ error: error.message });
+            const employee = await User.create(req.body)
+            return res.status(200).json({
+                success: true,
+                message: "Employee added Successfully",
+                employee
+            })
+        } 
+        catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            })
         }
     },
     async deleteEmp(req, res) {
@@ -18,17 +26,33 @@ const empApi = {
             const dltEmp = await User.findByIdAndDelete(id);
             console.log('delete employee');
 
-            return res.json(dltEmp);
-        } catch (error) {
-            return res.json({ error: error.message });
+             return res.status(200).json({
+                success: true,
+                message: "Employee Deleted Successfully",
+                dltEmp
+            })
+        }
+        catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            })
         }
     },
     async getAllemp(req, res) {
         try {
             const emps = await User.find({});
-            return res.json(emps);
-        } catch (error) {
-            return res.json({ error: error.message });
+            return res.status(200).json({
+                success: true,
+                message: "All Employee's",
+                emps
+            })
+        } 
+        catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            })
         }
     },
     async editEmp(req, res) {
@@ -36,11 +60,18 @@ const empApi = {
             const { password } = req.body
             req.body.password = await bcrypt.hash(password, 10)
             const editEmp = await User.findByIdAndUpdate(req.params.id, req.body)
-            return res.json(editEmp);
-        } catch (error) {
-            return res.json({ error: error.message });
+             return res.status(200).json({
+                success: true,
+                message: "Employee edited Successfully",
+                editDpt
+            })
+        }
+         catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            })
         }
     }
-
 }
 export default empApi

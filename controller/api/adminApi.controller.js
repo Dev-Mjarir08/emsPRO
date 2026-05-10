@@ -8,13 +8,21 @@ const adminApi = {
             req.body.password = await bcrypt.hash(password, 10)
             req.body.role = 'admin'
             const admin = await User.create(req.body)
-            return res.json(admin);
-        } catch (error) {
-            return res.json({ error: error.message });
+            return res.status(200).json({
+                success: true,
+                message: "Admin Created Successfully",
+                admin
+            })
+        }
+        catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            })
         }
     },
-    async login(req,res){
-        
+    async login(req, res) {
+
     }
 }
 export default adminApi

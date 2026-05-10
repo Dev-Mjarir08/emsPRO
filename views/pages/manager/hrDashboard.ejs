@@ -1,0 +1,55 @@
+<%- include('../../partials/header.ejs') %>
+
+<% if(user.role === "hr"){ %>
+
+<main class="content-area fade-in">
+
+    <div class="page-header">
+
+        <h1>HR Dashboard</h1>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div>
+                    <p class="stat-label">Employees</p>
+                    <h3 class="stat-value">248</h3>
+                </div>
+
+                <div class="stat-icon bg-grad-1">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div>
+                    <p class="stat-label">Pending Leaves</p>
+                    <h3 class="stat-value">18</h3>
+                </div>
+
+                <div class="stat-icon bg-grad-4">
+                    <i class="fa-solid fa-plane"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<% } %>
+
+<%- include('../../partials/footer.ejs') %>

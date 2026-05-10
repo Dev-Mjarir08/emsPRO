@@ -1,0 +1,20 @@
+/* ===== Responsive ===== */
+@media (max-width:991px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.show{transform:translateX(0)}
+  .main-content{margin-left:0}
+  .menu-toggle{display:inline-flex}
+  .topbar .search-box{max-width:200px}
+}
+@media (max-width:575px){
+  .topbar{padding:10px 12px;gap:8px}
+  .topbar .search-box{display:none}
+  .content-area{padding:16px}
+  .auth-card{padding:28px 22px}
+  .otp-inputs input{width:42px;height:50px;font-size:1.1rem}
+  .stat-card{padding:16px}
+  .stat-card .stat-value{font-size:1.3rem}
+  .page-header h1{font-size:1.2rem}
+}
+.sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1035}
+.sidebar-backdrop.show{display:block}

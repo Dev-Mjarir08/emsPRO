@@ -1,0 +1,41 @@
+/* ===== EMS Global Styles ===== */
+:root{
+  --primary:#4f46e5;--primary-dark:#3730a3;--primary-light:#6366f1;
+  --secondary:#06b6d4;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;
+  --info:#3b82f6;--dark:#0f172a;--sidebar-bg:#1e293b;--sidebar-hover:#334155;
+  --body-bg:#f1f5f9;--card-bg:#ffffff;--text:#1e293b;--text-muted:#64748b;
+  --border:#e2e8f0;--shadow:0 4px 6px -1px rgba(0,0,0,.07),0 2px 4px -2px rgba(0,0,0,.05);
+  --shadow-lg:0 10px 25px -5px rgba(0,0,0,.1);--radius:12px;--transition:all .25s ease;
+}
+[data-theme="dark"]{
+  --body-bg:#0f172a;--card-bg:#1e293b;--text:#f1f5f9;--text-muted:#94a3b8;--border:#334155;
+}
+*{box-sizing:border-box}
+body{font-family:'Inter','Segoe UI',sans-serif;background:var(--body-bg);color:var(--text);
+  margin:0;transition:var(--transition);font-size:14px}
+a{text-decoration:none;color:inherit}
+.btn-primary{background:var(--primary);border-color:var(--primary)}
+.btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+.text-primary-c{color:var(--primary)!important}
+.bg-primary-c{background:var(--primary)!important;color:#fff}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);transition:var(--transition)}
+.card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:1.5rem;font-weight:700;margin:0}
+.breadcrumb{background:transparent;padding:0;margin:4px 0 0;font-size:.85rem}
+.breadcrumb-item+.breadcrumb-item::before{color:var(--text-muted)}
+.form-control,.form-select{background:var(--card-bg);color:var(--text);border-color:var(--border)}
+.form-control:focus,.form-select:focus{border-color:var(--primary);box-shadow:0 0 0 .2rem rgba(79,70,229,.2)}
+.form-floating>label{color:var(--text-muted)}
+.table{color:var(--text)}
+.table>:not(caption)>*>*{background:transparent;border-color:var(--border)}
+.badge-status{padding:.4em .75em;border-radius:6px;font-weight:500;font-size:.75rem}
+.badge-active{background:rgba(16,185,129,.15);color:var(--success)}
+.badge-pending{background:rgba(245,158,11,.15);color:var(--warning)}
+.badge-inactive{background:rgba(239,68,68,.15);color:var(--danger)}
+.badge-info{background:rgba(59,130,246,.15);color:var(--info)}
+.modal-content{background:var(--card-bg);color:var(--text)}
+.dropdown-menu{background:var(--card-bg);border-color:var(--border)}
+.dropdown-item{color:var(--text)}
+.dropdown-item:hover{background:var(--body-bg);color:var(--primary)}

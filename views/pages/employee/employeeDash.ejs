@@ -1,0 +1,90 @@
+<%- include('../../partials/header.ejs') %>
+
+<% if(user.role === "employee"){ %>
+
+<main class="content-area fade-in">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>Employee Dashboard</h1>
+
+            <nav>
+                <ol class="breadcrumb">
+
+                    <li class="breadcrumb-item">
+                        <a href="#">Home</a>
+                    </li>
+
+                    <li class="breadcrumb-item active">
+                        Employee Dashboard
+                    </li>
+
+                </ol>
+            </nav>
+
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div>
+                    <p class="stat-label">Assigned Tasks</p>
+                    <h3 class="stat-value">12</h3>
+                </div>
+
+                <div class="stat-icon bg-grad-1">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div>
+                    <p class="stat-label">Pending Tasks</p>
+                    <h3 class="stat-value">4</h3>
+                </div>
+
+                <div class="stat-icon bg-grad-4">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="stat-card">
+
+                <div>
+                    <p class="stat-label">Leave Balance</p>
+                    <h3 class="stat-value">8</h3>
+                </div>
+
+                <div class="stat-icon bg-grad-2">
+                    <i class="fa-solid fa-plane"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+<% } %>
+
+<%- include('../../partials/footer.ejs') %>
