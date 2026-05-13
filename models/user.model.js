@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
+    dateOfBirth:{
+      type:String
+    },
+
     phone: {
       type: String,
     },
@@ -33,7 +37,7 @@ const userSchema = new mongoose.Schema(
       ref: "Department",
     },
 
-    profileImage: {
+    image: {
       type: String,
     },
 

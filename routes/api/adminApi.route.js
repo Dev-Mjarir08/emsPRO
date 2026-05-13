@@ -25,10 +25,10 @@ adminApiRouter.get('/hrs',hrApi.getAllHR)//get all hr
 adminApiRouter.patch('/hr/:id',hrApi.editHR)//edit hr
 
 //Department API
-adminApiRouter.get('/',departmentApi.getAlldpt)//get all departments
-adminApiRouter.post('/add-department',departmentApi.addDepartment)//add department
-adminApiRouter.delete('/departments/:id',departmentApi.deleteDepartment)//delete department
-adminApiRouter.patch('/department/:id',departmentApi.editDepartment)//edit department
+adminApiRouter.get('/dpt/all',departmentApi.getAlldpt)//get all departments
+adminApiRouter.post('/dpt/add-department',departmentApi.addDepartment)//add department
+adminApiRouter.delete('/dpt/departments/:id',departmentApi.deleteDepartment)//delete department
+adminApiRouter.patch('/dpt/:id',departmentApi.editDepartment)//edit department
 
 //Authentication API
 adminApiRouter.post('/auth/login',authApi.login)

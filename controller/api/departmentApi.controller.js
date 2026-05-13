@@ -4,7 +4,7 @@ const departmentApi = {
     async addDepartment(req, res) {
         try {
             let dpt = await Department.create(req.body)
-            console.log(department);
+            console.log(dpt);
             return res.status(200).json({
                 success: true,
                 message: "Department added Successfully",

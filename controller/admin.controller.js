@@ -62,6 +62,100 @@ const adminController = {
 
             return res.redirect('/admin/login');
         }
-    }
+    },
+    createEmpPage(req, res) {
+        return res.render('pages/admin/create-employee')
+    },
+    createDptPage(req, res) {
+        return res.render('pages/admin/create-department')
+    },
+    async viewDptpage(req, res) {
+        try {
+            const response = await fetch(
+                'http://localhost:8081/api/admin/dpt/all',
+                {
+                    method: 'GET',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+
+            const data = await response.json()
+            res.locals.department = data.dpt;
+            console.log(data);
+            return res.render('pages/admin/view-department')
+        }
+        catch (error) {
+
+            console.log(error.message);
+
+            res.redirect('/admin/dashboard');
+        }
+    },
+    async editDptpage(req, res) {
+        try {
+            const response = await fetch(
+                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+            const data = await response.json();
+            res.locals.department = data.dpt;
+            return res.render("pages/admin/edit-department");
+
+        } catch (error) {
+            console.log(error);
+            return res.send("Error loading edit page");
+        }
+    },
+
+    async createDpt(req, res) {
+        try {
+            const response = await fetch(
+                'http://localhost:8081/api/admin/dpt/add-department',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+
+            const data = await response.json()
+            console.log(data);
+
+            if (data.success) {
+
+                return res.redirect('/admin/dashboard')
+
+            } else {
+
+                return res.redirect(req.get('Referer') || '/admin/creat-dpt')
+
+            }
+
+        } catch (error) {
+
+            console.log(error.message);
+
+            return res.redirect(req.get('Referer') || '/admin/creat-dpt');
+        }
+    },
+    createHRPage(req, res) {
+        return res.render('pages/admin/create-hr')
+    },
+
+
 }
 export default adminController
