@@ -1,4 +1,5 @@
 import cookieParser from "cookie-parser"
+import Department from "../models/department.model.js"
 const adminController = {
     homePage(req, res) {
         return res.render('index')
@@ -63,11 +64,21 @@ const adminController = {
             return res.redirect('/admin/login');
         }
     },
-    createEmpPage(req, res) {
-        return res.render('pages/admin/create-employee')
+    async createEmpPage(req, res) {
+        try {
+
+            const dpt = await Department.find({})
+
+            return res.render("pages/admin/create-employee", {
+                dpt
+            })
+
+        } catch (error) {
+            console.log(error.message)
+        }
     },
 
-  async createEmp(req, res) {
+    async createEmp(req, res) {
         try {
             const response = await fetch(
                 'http://localhost:8081/api/admin/emp/add-Emp',

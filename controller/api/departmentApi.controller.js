@@ -37,7 +37,7 @@ const departmentApi = {
     },
     async getAlldpt(req, res) {
         try {
-            const dpt = await Department.find({});
+            const dpt = await Department.find({})
             return res.status(200).json({
                 success: true,
                 message: "All Department",
