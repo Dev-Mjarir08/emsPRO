@@ -66,6 +66,44 @@ const adminController = {
     createEmpPage(req, res) {
         return res.render('pages/admin/create-employee')
     },
+
+  async createEmp(req, res) {
+        try {
+            const response = await fetch(
+                'http://localhost:8081/api/admin/emp/add-Emp',
+                {
+                    method: 'POST',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+
+            const data = await response.json()
+            console.log(data);
+
+            if (data.success) {
+
+                return res.redirect('/admin/dashboard')
+
+            } else {
+
+                return res.redirect(req.get('Referer') || '/admin/create-emp')
+
+            }
+
+        } catch (error) {
+
+            console.log(error.message);
+
+            return res.redirect(req.get('Referer') || '/admin/creat-dpt');
+        }
+    },
+
+
     createDptPage(req, res) {
         return res.render('pages/admin/create-department')
     },
@@ -96,27 +134,6 @@ const adminController = {
             res.redirect('/admin/dashboard');
         }
     },
-    async editDptpage(req, res) {
-        try {
-            const response = await fetch(
-                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
-                {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                },
-            );
-            const data = await response.json();
-            res.locals.department = data.dpt;
-            return res.render("pages/admin/edit-department");
-
-        } catch (error) {
-            console.log(error);
-            return res.send("Error loading edit page");
-        }
-    },
-
     async createDpt(req, res) {
         try {
             const response = await fetch(
@@ -152,6 +169,72 @@ const adminController = {
             return res.redirect(req.get('Referer') || '/admin/creat-dpt');
         }
     },
+    async editDptpage(req, res) {
+        try {
+            const response = await fetch(
+                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+            const data = await response.json();
+            res.locals.department = data.dpt;
+            return res.render("pages/admin/edit-department");
+
+        } catch (error) {
+            console.log(error);
+            return res.send("Error loading edit page");
+        }
+    },
+    async editDpt(req, res) {
+        try {
+            const response = await fetch(
+                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
+                {
+                    method: 'PATCH',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+            const data = await response.json()
+            return res.redirect('/admin/view-dpt')
+            console.log(data);
+        } catch (error) {
+            console.log(error.message);
+            return res.redirect(req.get('Referer') || '/admin/edit-dpt')
+        }
+    },
+
+    async dltDpt(req, res) {
+        try {
+            const response = await fetch(
+                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
+                {
+                    method: 'DELETE',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+            const data = await response.json()
+            return res.redirect('/admin/view-dpt')
+            console.log(data);
+        } catch (error) {
+            console.log(error.message);
+            return res.redirect(req.get('Referer') || '/admin/edit-dpt')
+        }
+    },
+
     createHRPage(req, res) {
         return res.render('pages/admin/create-hr')
     },

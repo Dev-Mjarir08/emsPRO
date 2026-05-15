@@ -6,7 +6,7 @@ const empApi = {
             const { password } = req.body
             req.body.password = await bcrypt.hash(password, 10)
             req.body.role = 'employee'
-            const employee = await User.create(req.body)
+            const employee = (await User.create(req.body))
             return res.status(200).json({
                 success: true,
                 message: "Employee added Successfully",

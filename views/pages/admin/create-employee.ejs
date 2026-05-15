@@ -58,13 +58,23 @@
               <div class="form-floating"><input type="date" name="dateOfBirth" class="form-control"
                   placeholder="Date of Birth" /><label>Date of Birth</label></div>
             </div>
-            <div class="col-md-6"><label class="form-label">Department</label><select class="form-select">
-                <option>Engineering</option>
-                <option>Sales</option>
-                <option>HR</option>
-                <option>Marketing</option>
-                <option>Support</option>
-              </select></div>
+          <div class="col-md-6">
+
+              <select class="form-select" name="department">
+
+                <option value="">All Departments</option>
+
+                <% department.forEach((item)=> { %>
+
+                  <option value="<%= item._id %>">
+                    <%= item.name %>
+                  </option>
+
+                  <% }) %>
+
+              </select>
+
+            </div>
             <div class="col-md-6">
               <div class="form-floating"><input type="text" class="form-control"
                   placeholder="Position" /><label>Position</label></div>

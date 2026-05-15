@@ -10,7 +10,7 @@ const departmentApi = {
                 message: "Department added Successfully",
                 dpt
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
@@ -27,7 +27,7 @@ const departmentApi = {
                 message: "Department deleted Successfully",
                 dltDpt
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
@@ -43,7 +43,7 @@ const departmentApi = {
                 message: "All Department",
                 dpt
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
@@ -59,12 +59,31 @@ const departmentApi = {
                 message: "Department edited Successfully",
                 editDpt
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
                 message: error.message
             })
+        }
+    },
+    async singleDepartment(req, res) {
+
+        try {
+
+            const department = await Department.findById(req.params.id);
+
+            return res.json({
+                success: true,
+                dpt: department
+            });
+
+        } catch (error) {
+
+            return res.json({
+                success: false,
+                message: error.message
+            });
         }
     }
 }
