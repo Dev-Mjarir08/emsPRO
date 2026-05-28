@@ -41,11 +41,11 @@ const empApi = {
     },
     async getAllemp(req, res) {
         try {
-            const emps = await User.find({});
+            const employee = await User.find({});
             return res.status(200).json({
                 success: true,
                 message: "All Employee's",
-                emps
+                employee
             })
         } 
         catch (error) {
@@ -57,13 +57,11 @@ const empApi = {
     },
     async editEmp(req, res) {
         try {
-            const { password } = req.body
-            req.body.password = await bcrypt.hash(password, 10)
             const editEmp = await User.findByIdAndUpdate(req.params.id, req.body)
              return res.status(200).json({
                 success: true,
                 message: "Employee edited Successfully",
-                editDpt
+                editEmp
             })
         }
          catch (error) {
@@ -72,6 +70,21 @@ const empApi = {
                 message: error.message
             })
         }
+    },
+async getSingleEmp(req, res) {
+    try {
+        const employee = await User.findById(req.params.id);
+
+        return res.status(200).json({
+            success: true,
+            employee
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
+}
 }
 export default empApi

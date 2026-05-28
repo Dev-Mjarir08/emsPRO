@@ -15,7 +15,9 @@ adminApiRouter.post('/create-admin',adminApi.createAdmin)//Create Admin
 //User API
 adminApiRouter.post('/emp/add-Emp',empApi.addEmp)//add employee
 adminApiRouter.delete('/emp/:id',empApi.deleteEmp)//delete Employee
-adminApiRouter.get('/emps',empApi.getAllemp)//get all employee
+adminApiRouter.get('/emp/all',empApi.getAllemp)//get all employee
+adminApiRouter.get('/emp/:id',empApi.getSingleEmp)//get single employee
+
 adminApiRouter.patch('/emp/:id',empApi.editEmp)//edit employee
 
 //HR API

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import adminController from "../controller/admin.controller.js";
 import userAuth from "../middlewares/userAuth.js";
+import upload from "../middlewares/upload.js";
 
 const AdminRouter = Router()
 
@@ -10,9 +11,9 @@ AdminRouter.post('/login',adminController.login)
 
 //employee routes
 AdminRouter.get('/create-emp',adminController.createEmpPage)
-AdminRouter.post('/create-emp',adminController.createEmp)
-// AdminRouter.get('/view-dpt',adminController.viewEmpPage)
-// AdminRouter.get('/edit-dpt/:id',adminController.editEmpPage)
+AdminRouter.post('/create-emp',upload,adminController.createEmp)
+AdminRouter.get('/view-emp',adminController.viewEmpPage)
+AdminRouter.get('/edit-emp/:id',adminController.editEmpPage)
 // AdminRouter.post('/edit-dpt/:id',adminController.editEmp)
 // AdminRouter.get('/dlt-dpt/:id',adminController.dltEmp)
 

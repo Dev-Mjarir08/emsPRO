@@ -1,4 +1,5 @@
 import cookieParser from "cookie-parser"
+import fs from 'fs'
 import Department from "../models/department.model.js"
 const adminController = {
     homePage(req, res) {
@@ -80,6 +81,10 @@ const adminController = {
 
     async createEmp(req, res) {
         try {
+
+            if (req.file) {
+                req.body.image = req.file.path;
+            }
             const response = await fetch(
                 'http://localhost:8081/api/admin/emp/add-Emp',
                 {
@@ -245,7 +250,50 @@ const adminController = {
             return res.redirect(req.get('Referer') || '/admin/edit-dpt')
         }
     },
+    async viewEmpPage(req, res) {
+        try {
+            const response = await fetch(
+                'http://localhost:8081/api/admin/emp/all',
+                {
+                    method: 'GET',
 
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
+            );
+
+            const data = await response.json()
+            res.locals.employee = data.employee;
+            console.log(data);
+            return res.render('pages/admin/view-employee')
+        }
+        catch (error) {
+
+            console.log(error.message);
+
+            res.redirect('/admin/dashboard');
+        }
+    },
+    async editEmpPage(req, res) {
+        try {
+            const response = await fetch(
+                `http://localhost:8081/api/admin/emp/${req.params.id}`
+            );
+
+            const data = await response.json();
+
+            return res.render("pages/admin/edit-employee", {
+                employee: data.employee
+            });
+
+        } catch (error) {
+            console.log(error);
+            return res.send("Error loading edit page");
+        }
+    },
     createHRPage(req, res) {
         return res.render('pages/admin/create-hr')
     },
