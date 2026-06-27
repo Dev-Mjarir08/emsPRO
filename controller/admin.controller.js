@@ -277,21 +277,55 @@ const adminController = {
             res.redirect('/admin/dashboard');
         }
     },
-    async editEmpPage(req, res) {
+async editEmpPage(req, res) {
+    try {
+
+        const empResponse = await fetch(
+            `http://localhost:8081/api/admin/emp/${req.params.id}`
+        );
+
+        const deptResponse = await fetch(
+            `http://localhost:8081/api/admin/dpt/all`
+        );
+
+        const empData = await empResponse.json();
+        const deptData = await deptResponse.json();
+
+        return res.render("pages/admin/edit-employee", {
+            employee: empData.employee,
+            dpt: deptData.department || deptData.departments
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.send("Error loading edit page");
+    }
+},
+    async editDpt(req, res) {
         try {
+            if (req.file) {
+                req.body.image = req.file.path;
+            }
             const response = await fetch(
-                `http://localhost:8081/api/admin/emp/${req.params.id}`
+                `http://localhost:8081/api/admin/emp/${req.params.id}`,
+                {
+                    method: 'PATCH',
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify(req.body),
+                }
             );
-
-            const data = await response.json();
-
-            return res.render("pages/admin/edit-employee", {
-                employee: data.employee
-            });
-
+            if (req.file && image) {
+                fs.unlinkSync(image);
+            }
+            return res.redirect('/admin/view-emp')
+            console.log(data);
         } catch (error) {
-            console.log(error);
-            return res.send("Error loading edit page");
+            console.log(error.message);
+            return res.redirect(req.get('Referer') || '/admin/edit-emp')
         }
     },
     createHRPage(req, res) {

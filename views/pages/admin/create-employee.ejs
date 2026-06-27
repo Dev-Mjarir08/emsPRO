@@ -46,24 +46,25 @@
             </div>
             <div class="col-md-6">
               <div class="form-floating">
-                <input type="email" name="email" class="form-control"
-                  placeholder="Email" /><label>Email</label></div>
-            </div>
-               <div class="col-md-6">
-              <div class="form-floating">
-                <input type="password" name="password" class="form-control"
-                  placeholder="Password" /><label>Password</label></div>
+                <input type="email" name="email" class="form-control" placeholder="Email" /><label>Email</label>
+              </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating">
-                <input type="tel" name="phone" class="form-control"
-                  placeholder="Phone" /><label>Phone</label></div>
+                <input type="password" name="password" class="form-control"
+                  placeholder="Password" /><label>Password</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="tel" name="phone" class="form-control" placeholder="Phone" /><label>Phone</label>
+              </div>
             </div>
             <div class="col-md-6">
               <div class="form-floating"><input type="date" name="dateOfBirth" class="form-control"
                   placeholder="Date of Birth" /><label>Date of Birth</label></div>
             </div>
-          <div class="col-md-6">
+            <div class="col-md-6">
 
               <select class="form-select" name="department">
 
@@ -92,17 +93,24 @@
               <div class="form-floating"><input type="number" class="form-control"
                   placeholder="Salary" /><label>Salary</label></div>
             </div>
-            <div class="col-md-6"><label class="form-label">Status</label><select class="form-select">
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select">
                 <option>Active</option>
                 <option>Inactive</option>
                 <option>On Leave</option>
-              </select></div>
-                 <div class="col-md-6">
-              <div class="form-floating"><input type="file" class="form-control" name="image"
-                 /><label>Profile</label></div>
+              </select>
             </div>
-            <div class="col-12"><label class="form-label">Address</label><textarea class="form-control"
-                rows="3"></textarea></div>
+            <div class="col-md-6">
+              <div class="form-floating"><input type="file" class="form-control" name="image" /><label>Profile</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Address</label>
+              <textarea class="form-control"
+                rows="3">
+              </textarea>
+            </div>
             <div class="col-12 d-flex gap-2 mt-2">
               <button class="btn btn-primary px-4">Create Employee</button>
               <button type="reset" class="btn btn-outline-secondary px-4">Reset</button>

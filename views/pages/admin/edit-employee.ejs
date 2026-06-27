@@ -38,33 +38,93 @@
           <div></div>
         </div>
         <div class="card p-4">
-          <form class="row g-3" action="/admin/edit-emp/<%= employee._id %>" method="post">
+          <form class="row g-3" action="/admin/edit-emp/<%= employee._id %>" method="post"
+            enctype="multipart/form-data">
 
-            <div class="col-md-12">
-
+            <div class="col-md-6">
               <div class="form-floating">
-
-                <input type="text" value="<%= employee.name %>" name="name" class="form-control"
-                  placeholder="Department Name" />
-
-                <label>Department Name</label>
-
+                <input type="text" name="name" value="<%= employee.name %>" class="form-control"
+                  placeholder="Full Name" />
+                <label>Full Name</label>
               </div>
+            </div>
 
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="email" name="email" value="<%= employee.email %>" class="form-control"
+                  placeholder="Email" />
+                <label>Email</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="password" name="password" value="<%= employee.password %>" class="form-control"
+                  placeholder="Password" />
+                <label>Password</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="tel" name="phone" value="<%= employee.phone %>" class="form-control" placeholder="Phone" />
+                <label>Phone</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="date" name="dateOfBirth" value="<%= employee.dateOfBirth %>" class="form-control"
+                  placeholder="Date of Birth" />
+                <label>Date of Birth</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <select class="form-select" name="department">
+
+                <option value="">Select Department</option>
+
+                <% dpt.forEach((item)=> { %>
+
+                  <option value="<%= item._id %>" <%=employee.department &&
+                    employee.department._id.toString()===item._id.toString() ? 'selected' : '' %>>
+                    <%= item.name %>
+                  </option>
+
+                  <% }) %>
+
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="text" name="position" value="<%= employee.position %>" class="form-control"
+                  placeholder="Position" />
+                <label>Position</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input type="number" name="salary" value="<%= employee.salary %>" class="form-control"
+                  placeholder="Salary" />
+                <label>Salary</label>
+              </div>
             </div>
 
             <div class="col-12">
-
-              <label class="form-label">Description</label>
-
-              <textarea class="form-control" name="description" rows="3"><%= employee.description %></textarea>
-
+              <label class="form-label">Address</label>
+              <textarea class="form-control" name="address" rows="3"><%= employee.address %></textarea>
             </div>
 
             <div class="col-12 d-flex gap-2 mt-2">
-
               <button class="btn btn-primary px-4">
-                Update
+                Update Employee
+              </button>
+
+              <button type="reset" class="btn btn-outline-secondary px-4">
+                Reset
               </button>
             </div>
 

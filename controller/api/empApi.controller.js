@@ -12,7 +12,7 @@ const empApi = {
                 message: "Employee added Successfully",
                 employee
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
@@ -26,7 +26,7 @@ const empApi = {
             const dltEmp = await User.findByIdAndDelete(id);
             console.log('delete employee');
 
-             return res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: "Employee Deleted Successfully",
                 dltEmp
@@ -47,7 +47,7 @@ const empApi = {
                 message: "All Employee's",
                 employee
             })
-        } 
+        }
         catch (error) {
             return res.status(500).json({
                 success: false,
@@ -58,33 +58,33 @@ const empApi = {
     async editEmp(req, res) {
         try {
             const editEmp = await User.findByIdAndUpdate(req.params.id, req.body)
-             return res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 message: "Employee edited Successfully",
                 editEmp
             })
         }
-         catch (error) {
+        catch (error) {
             return res.status(500).json({
                 success: false,
                 message: error.message
             })
         }
     },
-async getSingleEmp(req, res) {
-    try {
-        const employee = await User.findById(req.params.id);
+    async getSingleEmp(req, res) {
+        try {
+            const employee = await User.findById(req.params.id).populate("department");
 
-        return res.status(200).json({
-            success: true,
-            employee
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        });
+            return res.status(200).json({
+                success: true,
+                employee
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
     }
-}
 }
 export default empApi

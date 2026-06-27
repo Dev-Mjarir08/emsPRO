@@ -14,7 +14,7 @@ AdminRouter.get('/create-emp',adminController.createEmpPage)
 AdminRouter.post('/create-emp',upload,adminController.createEmp)
 AdminRouter.get('/view-emp',adminController.viewEmpPage)
 AdminRouter.get('/edit-emp/:id',adminController.editEmpPage)
-// AdminRouter.post('/edit-dpt/:id',adminController.editEmp)
+// AdminRouter.post('/edit-emp/:id',adminController.editEmp)
 // AdminRouter.get('/dlt-dpt/:id',adminController.dltEmp)
 
 //Department Routes
