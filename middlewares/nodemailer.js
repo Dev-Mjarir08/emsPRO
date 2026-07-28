@@ -7,15 +7,15 @@ const sendMail = async (email, otp) => {
         service: "gmail",
 
         auth: {
-            user: "08mjarir@gmail.com",
-            pass:'adffrhxvenocbcsm'
+            user: "multanijarir08@gmail.com",
+            pass:'zfzlwprqftoucpfo'
         }
 
     });
 
     const mailOptions = {
 
-        from: "08mjarir@gmail.com",
+        from: "multanijarir08@gmail.com",
 
         to: email,
 

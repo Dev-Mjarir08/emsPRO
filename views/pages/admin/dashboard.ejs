@@ -1,104 +1,215 @@
 <%- include('../../partials/header.ejs') %>
 
-<% if(user.role === "admin"){ %>
+<% if(user && user.role === "admin"){ %>
 
 <main class="content-area fade-in">
 
-    <div class="page-header">
+    <!-- DASHBOARD HEADER -->
+    <div class="page-header mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
         <div>
-
-            <h1>Admin Dashboard</h1>
-
-            <nav>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="#">Home</a>
-                    </li>
-
-                    <li class="breadcrumb-item active">
-                        Dashboard
-                    </li>
-                </ol>
-            </nav>
-
+            <h1 class="h3 fw-bold mb-1">Admin Executive Dashboard</h1>
+            <p class="text-muted small mb-0">Real-time overview of workforce operations, project revenue, and payroll finance.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/payroll/create" class="btn btn-primary"><i class="fa-solid fa-file-invoice me-1"></i> Generate Payslip</a>
+            <a href="/task/create" class="btn btn-outline-primary"><i class="fa-solid fa-plus me-1"></i> New Project</a>
         </div>
     </div>
 
-    <!-- STATS -->
-    <div class="row g-4 mb-4">
-
+    <!-- SECTION 1: SYSTEM OVERVIEW STATS -->
+    <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">
-            <div class="stat-card">
-
+            <div class="stat-card p-3 d-flex align-items-center justify-content-between">
                 <div>
                     <p class="stat-label">Total Employees</p>
-                    <h3 class="stat-value">248</h3>
-                    <p class="stat-trend up">
-                        ▲ +12% this month
-                    </p>
+                    <h3 class="stat-value"><%= typeof totalEmp !== 'undefined' ? totalEmp : 0 %></h3>
                 </div>
-
                 <div class="stat-icon bg-grad-1">
                     <i class="fa-solid fa-users"></i>
                 </div>
-
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="stat-card">
-
+            <div class="stat-card p-3 d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Present Today</p>
-                    <h3 class="stat-value">215</h3>
-                    <p class="stat-trend up">
-                        ▲ 87% attendance
-                    </p>
+                    <p class="stat-label">Total HR Managers</p>
+                    <h3 class="stat-value"><%= typeof totalHR !== 'undefined' ? totalHR : 0 %></h3>
                 </div>
-
                 <div class="stat-icon bg-grad-2">
-                    <i class="fa-solid fa-user-check"></i>
+                    <i class="fa-solid fa-user-shield"></i>
                 </div>
-
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="stat-card">
-
+            <div class="stat-card p-3 d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Monthly Payroll</p>
-                    <h3 class="stat-value">$148K</h3>
-                    <p class="stat-trend up">
-                        ▲ +5.2%
-                    </p>
+                    <p class="stat-label">Departments</p>
+                    <h3 class="stat-value"><%= typeof totalDpt !== 'undefined' ? totalDpt : 0 %></h3>
                 </div>
-
                 <div class="stat-icon bg-grad-3">
-                    <i class="fa-solid fa-money-bill-wave"></i>
+                    <i class="fa-solid fa-building"></i>
                 </div>
-
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6">
-            <div class="stat-card">
-
+            <div class="stat-card p-3 d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Pending Leaves</p>
-                    <h3 class="stat-value">18</h3>
-                    <p class="stat-trend down">
-                        ▼ -3 vs last week
-                    </p>
+                    <p class="stat-label">Active Projects</p>
+                    <h3 class="stat-value"><%= typeof totalTasks !== 'undefined' ? totalTasks : 0 %></h3>
                 </div>
-
                 <div class="stat-icon bg-grad-4">
-                    <i class="fa-solid fa-plane"></i>
+                    <i class="fa-solid fa-list-check"></i>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- SECTION 2: FINANCIAL INTELLIGENCE HUB -->
+    <div class="card p-4 mb-4 border-0 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <h5 class="fw-bold mb-0 text-primary"><i class="fa-solid fa-coins me-2 text-warning"></i>Financial Intelligence & Budget Performance</h5>
+            <span class="badge bg-primary fs-7">Real-Time Currency: USD ($)</span>
+        </div>
+
+        <div class="row g-3">
+            <!-- Project Valuation -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded border border-success border-opacity-25 bg-success bg-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-semibold">Total Project Revenue</span>
+                        <i class="fa-solid fa-sack-dollar text-success fs-5"></i>
+                    </div>
+                    <h3 class="fw-bold text-success my-2">$<%= typeof totalProjectRevenue !== 'undefined' ? totalProjectRevenue.toLocaleString() : 0 %></h3>
+                    <span class="badge bg-success">Combined Project Valuation</span>
+                </div>
+            </div>
+
+            <!-- Monthly Salary Budget -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded border border-primary border-opacity-25 bg-primary bg-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-semibold">Monthly Payroll Budget</span>
+                        <i class="fa-solid fa-wallet text-primary fs-5"></i>
+                    </div>
+                    <h3 class="fw-bold text-primary my-2">$<%= typeof totalMonthlySalaryBudget !== 'undefined' ? totalMonthlySalaryBudget.toLocaleString() : 0 %></h3>
+                    <span class="badge bg-primary">Active Workforce Payroll</span>
+                </div>
+            </div>
+
+            <!-- Total Paid Salaries -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded border border-info border-opacity-25 bg-info bg-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-semibold">Disbursed Paid Salaries</span>
+                        <i class="fa-solid fa-circle-check text-info fs-5"></i>
+                    </div>
+                    <h3 class="fw-bold text-info my-2">$<%= typeof totalPaidSalary !== 'undefined' ? totalPaidSalary.toLocaleString() : 0 %></h3>
+                    <span class="badge bg-info">Processed Payslips</span>
+                </div>
+            </div>
+
+            <!-- Pending Salary Outstandings -->
+            <div class="col-xl-3 col-md-6">
+                <div class="p-3 rounded border border-danger border-opacity-25 bg-danger bg-opacity-10">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-muted small fw-semibold">Pending Outstandings</span>
+                        <i class="fa-solid fa-clock text-danger fs-5"></i>
+                    </div>
+                    <h3 class="fw-bold text-danger my-2">$<%= typeof totalPendingSalary !== 'undefined' ? totalPendingSalary.toLocaleString() : 0 %></h3>
+                    <span class="badge bg-danger">Unpaid Payslips</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION 3: RECENT ACTIVITY & OPERATIONS SPLIT VIEW -->
+    <div class="row g-4 mb-4">
+        <!-- Recent Projects & Pricing Table -->
+        <div class="col-lg-6">
+            <div class="card p-3 border-0 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-diagram-project me-2 text-primary"></i>Recent Projects & Value</h6>
+                    <a href="/task/view" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Project Title</th>
+                                <th>Assignee</th>
+                                <th>Status</th>
+                                <th class="text-end">Value ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(typeof recentTasks !== 'undefined' && recentTasks.length > 0) { %>
+                                <% recentTasks.forEach(t => { %>
+                                    <tr>
+                                        <td class="fw-bold"><%= t.title %></td>
+                                        <td><%= t.assignedTo ? t.assignedTo.name : 'Unassigned' %></td>
+                                        <td>
+                                            <% if(t.status === 'Completed') { %>
+                                                <span class="badge bg-success">Completed</span>
+                                            <% } else { %>
+                                                <span class="badge bg-warning text-dark"><%= t.status %></span>
+                                            <% } %>
+                                        </td>
+                                        <td class="text-end fw-bold text-success">$<%= t.price || 0 %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="4" class="text-center text-muted py-3">No recent projects recorded.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
+        <!-- Recent Salary Disbursals Table -->
+        <div class="col-lg-6">
+            <div class="card p-3 border-0 shadow-sm h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                    <h6 class="fw-bold mb-0"><i class="fa-solid fa-receipt me-2 text-success"></i>Recent Salary Disbursals</h6>
+                    <a href="/payroll/view" class="btn btn-sm btn-outline-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Employee / HR</th>
+                                <th>Month</th>
+                                <th>Status</th>
+                                <th class="text-end">Net Pay</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(typeof recentPayrolls !== 'undefined' && recentPayrolls.length > 0) { %>
+                                <% recentPayrolls.forEach(p => { %>
+                                    <tr>
+                                        <td class="fw-bold"><%= p.employee ? p.employee.name : 'Unknown' %></td>
+                                        <td><%= p.month %></td>
+                                        <td>
+                                            <% if(p.status === 'Paid') { %>
+                                                <span class="badge bg-success">Paid</span>
+                                            <% } else { %>
+                                                <span class="badge bg-warning text-dark">Pending</span>
+                                            <% } %>
+                                        </td>
+                                        <td class="text-end fw-bold text-primary">$<%= p.netSalary %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr><td colspan="4" class="text-center text-muted py-3">No recent payroll activity.</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
 </main>

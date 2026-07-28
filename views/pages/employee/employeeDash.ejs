@@ -1,86 +1,61 @@
 <%- include('../../partials/header.ejs') %>
 
-<% if(user.role === "employee"){ %>
+<% if(user && user.role === "employee"){ %>
 
 <main class="content-area fade-in">
 
-    <div class="page-header">
-
+    <div class="page-header mb-4">
         <div>
-
-            <h1>Employee Dashboard</h1>
-
+            <h1 class="h3 fw-bold">Employee Dashboard</h1>
             <nav>
                 <ol class="breadcrumb">
-
-                    <li class="breadcrumb-item">
-                        <a href="#">Home</a>
-                    </li>
-
-                    <li class="breadcrumb-item active">
-                        Employee Dashboard
-                    </li>
-
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Employee Dashboard</li>
                 </ol>
             </nav>
-
         </div>
-
     </div>
 
-    <div class="row g-4">
-
+    <div class="row g-4 mb-4">
         <div class="col-md-4">
-
-            <div class="stat-card">
-
+            <div class="stat-card p-3 border rounded shadow-sm bg-white d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Assigned Tasks</p>
-                    <h3 class="stat-value">12</h3>
+                    <p class="text-muted small mb-1">Total Assigned Tasks</p>
+                    <h3 class="fw-bold mb-0"><%= typeof assignedTasks !== 'undefined' ? assignedTasks : 0 %></h3>
                 </div>
-
-                <div class="stat-icon bg-grad-1">
+                <div class="stat-icon bg-primary text-white p-3 rounded-circle fs-4">
                     <i class="fa-solid fa-list-check"></i>
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-md-4">
-
-            <div class="stat-card">
-
+            <div class="stat-card p-3 border rounded shadow-sm bg-white d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Pending Tasks</p>
-                    <h3 class="stat-value">4</h3>
+                    <p class="text-muted small mb-1">Pending Tasks</p>
+                    <h3 class="fw-bold mb-0"><%= typeof pendingTasks !== 'undefined' ? pendingTasks : 0 %></h3>
                 </div>
-
-                <div class="stat-icon bg-grad-4">
+                <div class="stat-icon bg-warning text-dark p-3 rounded-circle fs-4">
                     <i class="fa-solid fa-clock"></i>
                 </div>
-
             </div>
-
         </div>
 
         <div class="col-md-4">
-
-            <div class="stat-card">
-
+            <div class="stat-card p-3 border rounded shadow-sm bg-white d-flex align-items-center justify-content-between">
                 <div>
-                    <p class="stat-label">Leave Balance</p>
-                    <h3 class="stat-value">8</h3>
+                    <p class="text-muted small mb-1">Completed Tasks</p>
+                    <h3 class="fw-bold mb-0"><%= typeof completedTasks !== 'undefined' ? completedTasks : 0 %></h3>
                 </div>
-
-                <div class="stat-icon bg-grad-2">
-                    <i class="fa-solid fa-plane"></i>
+                <div class="stat-icon bg-success text-white p-3 rounded-circle fs-4">
+                    <i class="fa-solid fa-circle-check"></i>
                 </div>
-
             </div>
-
         </div>
+    </div>
 
+    <div class="mt-4">
+        <a href="/task/my-tasks" class="btn btn-primary"><i class="fa-solid fa-tasks me-1"></i> View My Tasks</a>
     </div>
 
 </main>

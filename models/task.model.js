@@ -40,6 +40,11 @@ const taskSchema = new mongoose.Schema({
         type: String,
         enum: ["Pending", "In Progress", "Completed"],
         default: "Pending"
+    },
+
+    price: {
+        type: Number,
+        default: 0
     }
 
 }, {

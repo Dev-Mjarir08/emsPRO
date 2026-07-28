@@ -4,7 +4,6 @@ const departmentApi = {
     async addDepartment(req, res) {
         try {
             let dpt = await Department.create(req.body)
-            console.log(dpt);
             return res.status(200).json({
                 success: true,
                 message: "Department added Successfully",
@@ -68,9 +67,7 @@ const departmentApi = {
         }
     },
     async singleDepartment(req, res) {
-
         try {
-
             const department = await Department.findById(req.params.id);
 
             return res.json({
@@ -79,7 +76,6 @@ const departmentApi = {
             });
 
         } catch (error) {
-
             return res.json({
                 success: false,
                 message: error.message

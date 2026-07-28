@@ -1,0 +1,84 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="h3 fw-bold">Create Task / Project</h1>
+      <nav>
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+          <li class="breadcrumb-item"><a href="/task/view">Tasks</a></li>
+          <li class="breadcrumb-item active">Create</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm border-0">
+    <form class="row g-3" action="/task/create" method="post">
+      <!-- Title & Price -->
+      <div class="col-md-8">
+        <label class="form-label fw-semibold">Task Title <span class="text-danger">*</span></label>
+        <input type="text" name="title" class="form-control form-control-lg" placeholder="Enter task title" required />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Project Price / Budget ($)</label>
+        <div class="input-group input-group-lg">
+          <span class="input-group-text">$</span>
+          <input type="number" name="price" class="form-control" placeholder="0" value="0" min="0" required />
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="col-12">
+        <label class="form-label fw-semibold">Task Description <span class="text-danger">*</span></label>
+        <textarea name="description" class="form-control" rows="4" placeholder="Enter detailed task description..." required></textarea>
+      </div>
+
+      <!-- Assignee & Deadline -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Assign To Employee <span class="text-danger">*</span></label>
+        <select class="form-select form-select-lg" name="assignedTo" required>
+          <option value="">-- Select Employee / HR --</option>
+          <% if(employees && employees.length > 0) { %>
+            <% employees.forEach((emp)=> { %>
+              <option value="<%= emp._id %>"><%= emp.name %> (<%= emp.role.toUpperCase() %> - <%= emp.email %>)</option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Deadline Date <span class="text-danger">*</span></label>
+        <input type="date" name="deadline" class="form-control form-control-lg" required />
+      </div>
+
+      <!-- Priority & Status -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Priority</label>
+        <select class="form-select form-select-lg" name="priority">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Initial Status</label>
+        <select class="form-select form-select-lg" name="status">
+          <option value="Pending" selected>Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="col-12 d-flex gap-2 mt-4">
+        <button class="btn btn-primary btn-lg px-4"><i class="fa-solid fa-plus me-1"></i> Create Task</button>
+        <a href="/task/view" class="btn btn-outline-secondary btn-lg px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include('../../partials/footer.ejs') %>

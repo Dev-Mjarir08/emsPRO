@@ -24,8 +24,6 @@ const empApi = {
         try {
             const { id } = req.params;
             const dltEmp = await User.findByIdAndDelete(id);
-            console.log('delete employee');
-
             return res.status(200).json({
                 success: true,
                 message: "Employee Deleted Successfully",
@@ -57,7 +55,12 @@ const empApi = {
     },
     async editEmp(req, res) {
         try {
-            const editEmp = await User.findByIdAndUpdate(req.params.id, req.body)
+            if (req.body.password && req.body.password.trim() !== "") {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
+            } else {
+                delete req.body.password;
+            }
+            const editEmp = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
             return res.status(200).json({
                 success: true,
                 message: "Employee edited Successfully",

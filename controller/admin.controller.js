@@ -1,337 +1,347 @@
-import cookieParser from "cookie-parser"
-import fs from 'fs'
-import Department from "../models/department.model.js"
+import User from "../models/user.model.js";
+import Department from "../models/department.model.js";
+import Task from "../models/task.model.js";
+import Payroll from "../models/payroll.model.js";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 const adminController = {
+
     homePage(req, res) {
-        return res.render('index')
+        return res.render('index');
     },
+
     loginpage(req, res) {
-        return res.render('pages/admin/login')
+        return res.render('pages/admin/login');
     },
-    dashboard(req, res) {
-        return res.render('pages/admin/dashboard')
-    },
-    async login(req, res) {
 
+    async dashboard(req, res) {
         try {
+            const totalEmp = await User.countDocuments({ role: "employee" });
+            const totalHR = await User.countDocuments({ role: "hr" });
+            const totalDpt = await Department.countDocuments({});
+            const totalTasks = await Task.countDocuments({});
 
-            const response = await fetch(
-                'http://localhost:8081/api/admin/auth/login',
-                {
-                    method: 'POST',
+            const revenueAgg = await Task.aggregate([
+                { $group: { _id: null, total: { $sum: "$price" } } }
+            ]);
+            const totalProjectRevenue = revenueAgg[0]?.total || 0;
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+            const payrollBudgetAgg = await User.aggregate([
+                { $match: { role: { $in: ["employee", "hr"] } } },
+                { $group: { _id: null, total: { $sum: "$salary" } } }
+            ]);
+            const totalMonthlySalaryBudget = payrollBudgetAgg[0]?.total || 0;
 
-                    body: JSON.stringify(req.body),
-                }
-            );
+            const paidPayrollAgg = await Payroll.aggregate([
+                { $match: { status: "Paid" } },
+                { $group: { _id: null, total: { $sum: "$netSalary" } } }
+            ]);
+            const totalPaidSalary = paidPayrollAgg[0]?.total || 0;
 
-            const data = await response.json();
+            const pendingPayrollAgg = await Payroll.aggregate([
+                { $match: { status: "Pending" } },
+                { $group: { _id: null, total: { $sum: "$netSalary" } } }
+            ]);
+            const totalPendingSalary = pendingPayrollAgg[0]?.total || 0;
 
-            console.log(data);
+            const recentTasks = await Task.find()
+                .populate("assignedTo", "name")
+                .sort({ createdAt: -1 })
+                .limit(5);
 
-            // Login Failed
-            if (!data.success) {
+            const recentPayrolls = await Payroll.find()
+                .populate("employee", "name role")
+                .sort({ createdAt: -1 })
+                .limit(5);
 
+            return res.render('pages/admin/dashboard', {
+                totalEmp,
+                totalHR,
+                totalDpt,
+                totalTasks,
+                totalProjectRevenue,
+                totalMonthlySalaryBudget,
+                totalPaidSalary,
+                totalPendingSalary,
+                recentTasks,
+                recentPayrolls
+            });
+        } catch (error) {
+            return res.render('pages/admin/dashboard', {
+                totalEmp: 0,
+                totalHR: 0,
+                totalDpt: 0,
+                totalTasks: 0,
+                totalProjectRevenue: 0,
+                totalMonthlySalaryBudget: 0,
+                totalPaidSalary: 0,
+                totalPendingSalary: 0,
+                recentTasks: [],
+                recentPayrolls: []
+            });
+        }
+    },
+
+    async login(req, res) {
+        try {
+            const { email, password } = req.body;
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                req.session.error_msg = "Invalid email address or password!";
                 return res.redirect('/admin/login');
             }
 
-            // Save Token
-            res.cookie("token", data.token, {
-                httpOnly: true,
-            });
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                req.session.error_msg = "Invalid email address or password!";
+                return res.redirect('/admin/login');
+            }
 
-            // Admin Check
-            if (data.user.role === "admin") {
+            const token = jwt.sign(
+                {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                },
+                'secret',
+                { expiresIn: "7d" }
+            );
 
+            res.cookie("token", token, { httpOnly: true });
+            req.session.success_msg = `Welcome back, ${user.name}! Signed in successfully.`;
+
+            if (user.role === "admin") {
                 return res.redirect('/admin/dashboard');
-            }
-            else if (data.user.role === "hr") {
+            } else if (user.role === "hr") {
                 return res.redirect('/hr/dashboard');
-            }
-            else {
-
+            } else {
                 return res.redirect('/emp/dashboard');
             }
 
-            // Non Admin
-
         } catch (error) {
-
-            console.log(error.message);
-
+            req.session.error_msg = "An unexpected error occurred during sign in.";
             return res.redirect('/admin/login');
         }
     },
+
+    // Employee Handlers
     async createEmpPage(req, res) {
         try {
-
-            const dpt = await Department.find({})
-
-            return res.render("pages/admin/create-employee", {
-                dpt
-            })
-
+            const dpt = await Department.find({});
+            return res.render("pages/admin/create-employee", { dpt });
         } catch (error) {
-            console.log(error.message)
+            return res.redirect('/admin/dashboard');
         }
     },
 
     async createEmp(req, res) {
         try {
-
             if (req.file) {
                 req.body.image = req.file.path;
             }
-            const response = await fetch(
-                'http://localhost:8081/api/admin/emp/add-Emp',
-                {
-                    method: 'POST',
+            if (req.body.password) {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
+            }
+            req.body.role = "employee";
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+            await User.create(req.body);
+            req.session.success_msg = "Employee added successfully!";
+            return res.redirect('/admin/view-emp');
+        } catch (error) {
+            req.session.error_msg = "Failed to create employee. Please try again.";
+            return res.redirect(req.get('Referer') || '/admin/create-emp');
+        }
+    },
 
-                    body: JSON.stringify(req.body),
-                }
-            );
+    async viewEmpPage(req, res) {
+        try {
+            const employee = await User.find({ role: "employee" }).populate("department");
+            return res.render('pages/admin/view-employee', { employee });
+        } catch (error) {
+            return res.redirect('/admin/dashboard');
+        }
+    },
 
-            const data = await response.json()
-            console.log(data);
+    async editEmpPage(req, res) {
+        try {
+            const employee = await User.findById(req.params.id).populate("department");
+            const dpt = await Department.find({});
+            return res.render("pages/admin/edit-employee", { employee, dpt });
+        } catch (error) {
+            return res.redirect('/admin/view-emp');
+        }
+    },
 
-            if (data.success) {
-
-                return res.redirect('/admin/dashboard')
-
+    async editEmp(req, res) {
+        try {
+            if (req.file) {
+                req.body.image = req.file.path;
+            }
+            if (req.body.password && req.body.password.trim() !== "") {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
             } else {
-
-                return res.redirect(req.get('Referer') || '/admin/create-emp')
-
+                delete req.body.password;
             }
 
+            await User.findByIdAndUpdate(req.params.id, req.body);
+            req.session.success_msg = "Employee updated successfully!";
+            return res.redirect('/admin/view-emp');
         } catch (error) {
-
-            console.log(error.message);
-
-            return res.redirect(req.get('Referer') || '/admin/creat-dpt');
+            req.session.error_msg = "Failed to update employee details.";
+            return res.redirect(req.get('Referer') || '/admin/view-emp');
         }
     },
 
-
-    createDptPage(req, res) {
-        return res.render('pages/admin/create-department')
-    },
-    async viewDptpage(req, res) {
+    async dltEmp(req, res) {
         try {
-            const response = await fetch(
-                'http://localhost:8081/api/admin/dpt/all',
-                {
-                    method: 'GET',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-
-            const data = await response.json()
-            res.locals.department = data.dpt;
-            console.log(data);
-            return res.render('pages/admin/view-department')
-        }
-        catch (error) {
-
-            console.log(error.message);
-
-            res.redirect('/admin/dashboard');
+            await User.findByIdAndDelete(req.params.id);
+            req.session.success_msg = "Employee record deleted!";
+            return res.redirect('/admin/view-emp');
+        } catch (error) {
+            req.session.error_msg = "Failed to delete employee.";
+            return res.redirect('/admin/view-emp');
         }
     },
+
+    // Department Handlers
+    createDptPage(req, res) {
+        return res.render('pages/admin/create-department');
+    },
+
     async createDpt(req, res) {
         try {
-            const response = await fetch(
-                'http://localhost:8081/api/admin/dpt/add-department',
-                {
-                    method: 'POST',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-
-            const data = await response.json()
-            console.log(data);
-
-            if (data.success) {
-
-                return res.redirect('/admin/dashboard')
-
-            } else {
-
-                return res.redirect(req.get('Referer') || '/admin/creat-dpt')
-
-            }
-
+            req.body.createdBy = req.userId;
+            await Department.create(req.body);
+            req.session.success_msg = "Department created successfully!";
+            return res.redirect('/admin/view-dpt');
         } catch (error) {
-
-            console.log(error.message);
-
-            return res.redirect(req.get('Referer') || '/admin/creat-dpt');
+            req.session.error_msg = "Failed to create department.";
+            return res.redirect(req.get('Referer') || '/admin/create-dpt');
         }
     },
+
+    async viewDptpage(req, res) {
+        try {
+            const department = await Department.find({});
+            return res.render('pages/admin/view-department', { department });
+        } catch (error) {
+            return res.redirect('/admin/dashboard');
+        }
+    },
+
     async editDptpage(req, res) {
         try {
-            const response = await fetch(
-                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                },
-            );
-            const data = await response.json();
-            res.locals.department = data.dpt;
-            return res.render("pages/admin/edit-department");
-
+            const department = await Department.findById(req.params.id);
+            return res.render("pages/admin/edit-department", { department });
         } catch (error) {
-            console.log(error);
-            return res.send("Error loading edit page");
+            return res.redirect('/admin/view-dpt');
         }
     },
+
     async editDpt(req, res) {
         try {
-            const response = await fetch(
-                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
-                {
-                    method: 'PATCH',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-            const data = await response.json()
-            return res.redirect('/admin/view-dpt')
-            console.log(data);
+            await Department.findByIdAndUpdate(req.params.id, req.body);
+            req.session.success_msg = "Department updated successfully!";
+            return res.redirect('/admin/view-dpt');
         } catch (error) {
-            console.log(error.message);
-            return res.redirect(req.get('Referer') || '/admin/edit-dpt')
+            req.session.error_msg = "Failed to update department.";
+            return res.redirect(req.get('Referer') || '/admin/view-dpt');
         }
     },
 
     async dltDpt(req, res) {
         try {
-            const response = await fetch(
-                `http://localhost:8081/api/admin/dpt/${req.params.id}`,
-                {
-                    method: 'DELETE',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-            const data = await response.json()
-            return res.redirect('/admin/view-dpt')
-            console.log(data);
+            await Department.findByIdAndDelete(req.params.id);
+            req.session.success_msg = "Department deleted!";
+            return res.redirect('/admin/view-dpt');
         } catch (error) {
-            console.log(error.message);
-            return res.redirect(req.get('Referer') || '/admin/edit-dpt')
+            req.session.error_msg = "Failed to delete department.";
+            return res.redirect('/admin/view-dpt');
         }
     },
-    async viewEmpPage(req, res) {
+
+    // HR Handlers
+    async createHRPage(req, res) {
         try {
-            const response = await fetch(
-                'http://localhost:8081/api/admin/emp/all',
-                {
-                    method: 'GET',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-
-            const data = await response.json()
-            res.locals.employee = data.employee;
-            console.log(data);
-            return res.render('pages/admin/view-employee')
-        }
-        catch (error) {
-
-            console.log(error.message);
-
-            res.redirect('/admin/dashboard');
+            const dpt = await Department.find({});
+            return res.render('pages/admin/create-hr', { dpt });
+        } catch (error) {
+            return res.render('pages/admin/create-hr', { dpt: [] });
         }
     },
-async editEmpPage(req, res) {
-    try {
 
-        const empResponse = await fetch(
-            `http://localhost:8081/api/admin/emp/${req.params.id}`
-        );
-
-        const deptResponse = await fetch(
-            `http://localhost:8081/api/admin/dpt/all`
-        );
-
-        const empData = await empResponse.json();
-        const deptData = await deptResponse.json();
-
-        return res.render("pages/admin/edit-employee", {
-            employee: empData.employee,
-            dpt: deptData.department || deptData.departments
-        });
-
-    } catch (error) {
-        console.log(error);
-        return res.send("Error loading edit page");
-    }
-},
-    async editDpt(req, res) {
+    async createHR(req, res) {
         try {
             if (req.file) {
                 req.body.image = req.file.path;
             }
-            const response = await fetch(
-                `http://localhost:8081/api/admin/emp/${req.params.id}`,
-                {
-                    method: 'PATCH',
-
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-
-                    body: JSON.stringify(req.body),
-                }
-            );
-            if (req.file && image) {
-                fs.unlinkSync(image);
+            if (req.body.password) {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
             }
-            return res.redirect('/admin/view-emp')
-            console.log(data);
+            req.body.role = "hr";
+
+            await User.create(req.body);
+            req.session.success_msg = "HR account created successfully!";
+            return res.redirect('/admin/view-hr');
         } catch (error) {
-            console.log(error.message);
-            return res.redirect(req.get('Referer') || '/admin/edit-emp')
+            req.session.error_msg = "Failed to create HR account.";
+            return res.redirect(req.get('Referer') || '/admin/create-hr');
         }
     },
-    createHRPage(req, res) {
-        return res.render('pages/admin/create-hr')
+
+    async viewHRPage(req, res) {
+        try {
+            const hrList = await User.find({ role: "hr" }).populate("department");
+            return res.render('pages/admin/view-hr', { hrList });
+        } catch (error) {
+            return res.redirect('/admin/dashboard');
+        }
     },
 
+    async editHRPage(req, res) {
+        try {
+            const hr = await User.findById(req.params.id).populate("department");
+            const dpt = await Department.find({});
+            return res.render('pages/admin/edit-hr', { hr, dpt });
+        } catch (error) {
+            return res.redirect('/admin/view-hr');
+        }
+    },
 
-}
-export default adminController
+    async editHR(req, res) {
+        try {
+            if (req.file) {
+                req.body.image = req.file.path;
+            }
+            if (req.body.password && req.body.password.trim() !== "") {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
+            } else {
+                delete req.body.password;
+            }
+
+            await User.findByIdAndUpdate(req.params.id, req.body);
+            req.session.success_msg = "HR account updated successfully!";
+            return res.redirect('/admin/view-hr');
+        } catch (error) {
+            req.session.error_msg = "Failed to update HR account.";
+            return res.redirect(req.get('Referer') || '/admin/view-hr');
+        }
+    },
+
+    async dltHR(req, res) {
+        try {
+            await User.findByIdAndDelete(req.params.id);
+            req.session.success_msg = "HR account deleted!";
+            return res.redirect('/admin/view-hr');
+        } catch (error) {
+            req.session.error_msg = "Failed to delete HR account.";
+            return res.redirect('/admin/view-hr');
+        }
+    }
+
+};
+
+export default adminController;

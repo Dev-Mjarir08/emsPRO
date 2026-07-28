@@ -1,0 +1,54 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="h3 fw-bold">Edit Profile</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/profile">Profile</a></li>
+          <li class="breadcrumb-item active">Edit</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm border-0">
+    <form class="row g-3" action="/edit-profile" method="post" enctype="multipart/form-data">
+      <div class="col-md-6">
+        <div class="form-floating">
+          <input type="text" name="name" value="<%= profileUser ? profileUser.name : '' %>" class="form-control" placeholder="Full Name" required />
+          <label>Full Name</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-floating">
+          <input type="email" value="<%= profileUser ? profileUser.email : '' %>" class="form-control bg-light" placeholder="Email" readonly />
+          <label>Email (Cannot be changed)</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-floating">
+          <input type="tel" name="phone" value="<%= profileUser && profileUser.phone ? profileUser.phone : '' %>" class="form-control" placeholder="Phone" />
+          <label>Phone</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-floating">
+          <input type="file" name="image" class="form-control" />
+          <label>Profile Image</label>
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Address</label>
+        <textarea name="address" class="form-control" rows="3"><%= profileUser && profileUser.address ? profileUser.address : '' %></textarea>
+      </div>
+      <div class="col-12 d-flex gap-2 mt-3">
+        <button class="btn btn-primary px-4"><i class="fa-solid fa-save me-1"></i> Save Changes</button>
+        <a href="/profile" class="btn btn-outline-secondary px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include('../../partials/footer.ejs') %>

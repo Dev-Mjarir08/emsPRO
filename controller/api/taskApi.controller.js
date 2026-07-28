@@ -1,16 +1,20 @@
 import Task from "../../models/task.model.js";
 
-const taskApi= {
+const taskApi = {
 
   // Create Task
   async createTask(req, res) {
     try {
-
-      const { title, description } = req.body;
+      const { title, description, assignedTo, assignedBy, deadline, priority, status } = req.body;
 
       const task = await Task.create({
         title,
         description,
+        assignedTo: assignedTo || req.user?._id,
+        assignedBy: assignedBy || req.user?._id,
+        deadline: deadline || new Date(),
+        priority: priority || "Medium",
+        status: status || "Pending"
       });
 
       return res.status(201).json({
@@ -20,11 +24,9 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
-        message: "Server Error",
+        message: error.message || "Server Error",
       });
     }
   },
@@ -50,8 +52,6 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
         message: "Server Error",
@@ -65,6 +65,7 @@ const taskApi= {
 
       const tasks = await Task.find()
         .populate("assignedTo", "name email")
+        .populate("assignedBy", "name email")
         .sort({ createdAt: -1 });
 
       return res.status(200).json({
@@ -74,8 +75,27 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
+      return res.status(500).json({
+        success: false,
+        message: "Server Error",
+      });
+    }
+  },
 
+  // Get My Tasks
+  async getMyTasks(req, res) {
+    try {
+      const userId = req.user?._id || req.params.userId;
+      const tasks = await Task.find({ assignedTo: userId })
+        .populate("assignedBy", "name email")
+        .sort({ createdAt: -1 });
+
+      return res.status(200).json({
+        success: true,
+        total: tasks.length,
+        tasks,
+      });
+    } catch (error) {
       return res.status(500).json({
         success: false,
         message: "Server Error",
@@ -90,7 +110,8 @@ const taskApi= {
       const { id } = req.params;
 
       const task = await Task.findById(id)
-        .populate("assignedTo", "name email");
+        .populate("assignedTo", "name email")
+        .populate("assignedBy", "name email");
 
       if (!task) {
         return res.status(404).json({
@@ -105,8 +126,6 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
         message: "Server Error",
@@ -119,15 +138,17 @@ const taskApi= {
     try {
 
       const { id } = req.params;
+      const { title, description, assignedTo, deadline, priority, status } = req.body;
 
-      const { title, description } = req.body;
+      const updateData = { title, description };
+      if (assignedTo) updateData.assignedTo = assignedTo;
+      if (deadline) updateData.deadline = deadline;
+      if (priority) updateData.priority = priority;
+      if (status) updateData.status = status;
 
       const task = await Task.findByIdAndUpdate(
         id,
-        {
-          title,
-          description,
-        },
+        updateData,
         {
           new: true,
         }
@@ -147,8 +168,6 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
         message: "Server Error",
@@ -177,8 +196,6 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
         message: "Server Error",
@@ -218,8 +235,6 @@ const taskApi= {
       });
 
     } catch (error) {
-      console.log(error);
-
       return res.status(500).json({
         success: false,
         message: "Server Error",

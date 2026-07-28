@@ -1,0 +1,85 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="h3 fw-bold">Generate Payslip</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+          <li class="breadcrumb-item"><a href="/payroll/view">Payroll</a></li>
+          <li class="breadcrumb-item active">Generate</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm border-0">
+    <form class="row g-3" action="/payroll/create" method="post">
+      <div class="col-md-6">
+        <label class="form-label small text-muted">Select Employee / HR</label>
+        <select class="form-select form-select-lg" name="employee" required id="empSelect">
+          <option value="">Select Employee / HR</option>
+          <% if(employees && employees.length > 0) { %>
+            <% employees.forEach((emp)=> { %>
+              <option value="<%= emp._id %>" data-salary="<%= emp.salary || 0 %>"><%= emp.name %> (<%= emp.role.toUpperCase() %> - <%= emp.email %>)</option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-floating">
+          <input type="text" name="month" class="form-control" placeholder="Month (e.g. July 2026)" value="July 2026" required />
+          <label>Salary Month</label>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-floating">
+          <input type="number" name="basicSalary" id="basicSalary" class="form-control" placeholder="Basic Salary" required />
+          <label>Basic Salary ($)</label>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-floating">
+          <input type="number" name="allowance" id="allowance" class="form-control" placeholder="Allowance" value="0" />
+          <label>Allowance ($)</label>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="form-floating">
+          <input type="number" name="deduction" id="deduction" class="form-control" placeholder="Deduction" value="0" />
+          <label>Deductions ($)</label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label small text-muted">Payment Status</label>
+        <select class="form-select" name="status">
+          <option value="Pending" selected>Pending</option>
+          <option value="Paid">Paid</option>
+        </select>
+      </div>
+
+      <div class="col-12 d-flex gap-2 mt-3">
+        <button class="btn btn-primary px-4"><i class="fa-solid fa-file-invoice me-1"></i> Generate Payslip</button>
+        <a href="/payroll/view" class="btn btn-outline-secondary px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<script>
+  document.getElementById('empSelect').addEventListener('change', function() {
+    const selected = this.options[this.selectedIndex];
+    const salary = selected.getAttribute('data-salary');
+    if (salary) {
+      document.getElementById('basicSalary').value = salary;
+    }
+  });
+</script>
+
+<%- include('../../partials/footer.ejs') %>

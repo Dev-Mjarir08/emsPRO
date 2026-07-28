@@ -24,8 +24,6 @@ const hrApi = {
         try {
             const { id } = req.params;
             const dltHR = await User.findByIdAndDelete(id);
-            console.log('delete HR');
-
             return res.status(200).json({
                 success: true,
                 message: "HR Deleted Successfully",
@@ -55,9 +53,12 @@ const hrApi = {
     },
     async editHR(req, res) {
         try {
-            const { password } = req.body
-            req.body.password = await bcrypt.hash(password, 10)
-            const editHR = await User.findByIdAndUpdate(req.params.id, req.body)
+            if (req.body.password && req.body.password.trim() !== "") {
+                req.body.password = await bcrypt.hash(req.body.password, 10);
+            } else {
+                delete req.body.password;
+            }
+            const editHR = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
             return res.status(200).json({
                 success: true,
                 message: "HR edited Successfully",
@@ -68,6 +69,20 @@ const hrApi = {
                 success: false,
                 message: error.message
             })
+        }
+    },
+    async getSingleHR(req, res) {
+        try {
+            const hr = await User.findById(req.params.id);
+            return res.status(200).json({
+                success: true,
+                hr
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
         }
     }
 }

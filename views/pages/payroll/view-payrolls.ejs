@@ -1,0 +1,81 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold">Payroll & Salary Management</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+          <li class="breadcrumb-item active">Payroll</li>
+        </ol>
+      </nav>
+    </div>
+    <div>
+      <a href="/payroll/create" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> Generate Payslip</a>
+    </div>
+  </div>
+
+  <div class="card p-3 shadow-sm border-0">
+    <div class="table-responsive">
+      <table id="dataTable" class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Employee / HR</th>
+            <th>Role</th>
+            <th>Month</th>
+            <th>Basic</th>
+            <th>Allowance</th>
+            <th>Deduction</th>
+            <th>Net Salary</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(payrolls && payrolls.length > 0) { %>
+            <% payrolls.forEach((item, index)=> { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td class="fw-bold"><%= item.employee ? item.employee.name : 'Unknown' %></td>
+                <td><span class="badge bg-secondary text-capitalize"><%= item.employee ? item.employee.role : '' %></span></td>
+                <td><%= item.month %></td>
+                <td>$<%= item.basicSalary %></td>
+                <td class="text-success">+$<%= item.allowance %></td>
+                <td class="text-danger">-$<%= item.deduction %></td>
+                <td class="fw-bold fs-6 text-primary">$<%= item.netSalary %></td>
+                <td>
+                  <% if(item.status === 'Paid') { %>
+                    <span class="badge bg-success">Paid</span>
+                  <% } else { %>
+                    <span class="badge bg-warning text-dark">Pending</span>
+                  <% } %>
+                </td>
+                <td>
+                  <a href="/payroll/payslip/<%= item._id %>" class="btn btn-sm btn-outline-info me-1" title="View Payslip">
+                    <i class="fa-solid fa-file-invoice"></i>
+                  </a>
+                  <% if(item.status !== 'Paid') { %>
+                    <a href="/payroll/pay/<%= item._id %>" class="btn btn-sm btn-success me-1" title="Mark as Paid">
+                      <i class="fa-solid fa-check"></i> Pay
+                    </a>
+                  <% } %>
+                  <a href="/payroll/dlt/<%= item._id %>" onclick="return confirm('Are you sure you want to delete this payroll entry?')" class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="fa-solid fa-trash"></i>
+                  </a>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="10" class="text-center text-muted py-4">No payroll records found.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<%- include('../../partials/footer.ejs') %>

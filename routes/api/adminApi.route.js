@@ -24,6 +24,7 @@ adminApiRouter.patch('/emp/:id',empApi.editEmp)//edit employee
 adminApiRouter.post('/hr/add-hr',hrApi.addHR)//add hr
 adminApiRouter.delete('/hr/:id',hrApi.deleteHR)//delete hr
 adminApiRouter.get('/hrs',hrApi.getAllHR)//get all hr
+adminApiRouter.get('/hr/:id',hrApi.getSingleHR)//get single hr
 adminApiRouter.patch('/hr/:id',hrApi.editHR)//edit hr
 
 //Department API

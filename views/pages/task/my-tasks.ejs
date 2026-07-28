@@ -1,0 +1,80 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="h3 fw-bold">My Assigned Tasks</h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active">My Tasks</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card p-3 shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Task Title</th>
+            <th>Description</th>
+            <th>Assigned By</th>
+            <th>Deadline</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if(tasks && tasks.length > 0) { %>
+            <% tasks.forEach((item, index)=> { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td class="fw-bold"><%= item.title %></td>
+                <td><%= item.description %></td>
+                <td><%= item.assignedBy ? item.assignedBy.name : 'Manager' %></td>
+                <td><%= item.deadline ? new Date(item.deadline).toLocaleDateString() : 'N/A' %></td>
+                <td>
+                  <% if(item.priority === 'High') { %>
+                    <span class="badge bg-danger">High</span>
+                  <% } else if(item.priority === 'Medium') { %>
+                    <span class="badge bg-warning text-dark">Medium</span>
+                  <% } else { %>
+                    <span class="badge bg-info text-dark">Low</span>
+                  <% } %>
+                </td>
+                <td>
+                  <% if(item.status === 'Completed') { %>
+                    <span class="badge bg-success">Completed</span>
+                  <% } else if(item.status === 'In Progress') { %>
+                    <span class="badge bg-primary">In Progress</span>
+                  <% } else { %>
+                    <span class="badge bg-secondary">Pending</span>
+                  <% } %>
+                </td>
+                <td>
+                  <form action="/task/update-status/<%= item._id %>" method="post" class="d-flex align-items-center gap-1">
+                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                      <option value="Pending" <%= item.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                      <option value="In Progress" <%= item.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                      <option value="Completed" <%= item.status === 'Completed' ? 'selected' : '' %>>Completed</option>
+                    </select>
+                  </form>
+                </td>
+              </tr>
+            <% }) %>
+          <% } else { %>
+            <tr>
+              <td colspan="8" class="text-center text-muted py-4">No tasks assigned to you.</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<%- include('../../partials/footer.ejs') %>

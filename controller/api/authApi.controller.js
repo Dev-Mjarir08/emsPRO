@@ -147,8 +147,8 @@ const authApi = {
     async profile(req, res) {
 
         try {
-
-            const user = await User.findById(req.user.id)
+            const userId = req.user?._id || req.user?.id || req.userId;
+            const user = await User.findById(userId)
                 .populate("department")
                 .select("-password");
 
@@ -166,6 +166,55 @@ const authApi = {
 
         }
 
+    },
+    async updateProfile(req, res) {
+        try {
+            const userId = req.user?._id || req.user?.id || req.userId;
+            const { name, phone, address } = req.body;
+            const updateData = { name, phone, address };
+            if (req.file) {
+                updateData.image = req.file.path;
+            }
+            const user = await User.findByIdAndUpdate(userId, updateData, { new: true }).select("-password");
+            return res.status(200).json({
+                success: true,
+                message: "Profile updated successfully",
+                user
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    },
+    async changePassword(req, res) {
+        try {
+            const userId = req.user?._id || req.user?.id || req.userId;
+            const { oldPassword, newPassword } = req.body;
+            const user = await User.findById(userId);
+
+            const isMatch = await bcrypt.compare(oldPassword, user.password);
+            if (!isMatch) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Incorrect current password"
+                });
+            }
+
+            user.password = await bcrypt.hash(newPassword, 10);
+            await user.save();
+
+            return res.status(200).json({
+                success: true,
+                message: "Password changed successfully"
+            });
+        } catch (error) {
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
     }
 
 }

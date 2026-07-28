@@ -1,0 +1,74 @@
+<%- include('../../partials/header.ejs') %>
+
+<main class="content-area fade-in">
+  <div class="page-header mb-4">
+    <div>
+      <h1 class="h3 fw-bold">Edit HR Account</h1>
+      <nav>
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Home</a></li>
+          <li class="breadcrumb-item"><a href="/admin/view-hr">HR Managers</a></li>
+          <li class="breadcrumb-item active">Edit</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="card p-4 shadow-sm border-0">
+    <form class="row g-3" action="/admin/edit-hr/<%= hr._id %>" method="post" enctype="multipart/form-data">
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+        <input type="text" name="name" value="<%= hr.name %>" class="form-control form-control-lg" placeholder="Full Name" required />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
+        <input type="email" name="email" value="<%= hr.email %>" class="form-control form-control-lg" placeholder="Email Address" required />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">New Password <span class="text-muted fw-normal">(leave blank to keep current)</span></label>
+        <input type="password" name="password" class="form-control form-control-lg" placeholder="••••••••" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Phone Number</label>
+        <input type="tel" name="phone" value="<%= hr.phone || '' %>" class="form-control form-control-lg" placeholder="+1 234 567 890" />
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Department</label>
+        <select class="form-select form-select-lg" name="department">
+          <option value="">-- Select Department --</option>
+          <% if(dpt && dpt.length > 0) { %>
+            <% dpt.forEach((item)=> { %>
+              <option value="<%= item._id %>" <%= hr.department && (hr.department._id ? hr.department._id.toString() : hr.department.toString()) === item._id.toString() ? 'selected' : '' %>><%= item.name %></option>
+            <% }) %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Monthly Salary ($)</label>
+        <input type="number" name="salary" value="<%= hr.salary || '' %>" class="form-control form-control-lg" placeholder="5000" />
+      </div>
+
+      <div class="col-md-12">
+        <label class="form-label fw-semibold">Profile Image</label>
+        <input type="file" name="image" class="form-control form-control-lg" />
+      </div>
+
+      <div class="col-12">
+        <label class="form-label fw-semibold">Address</label>
+        <textarea name="address" class="form-control" rows="3" placeholder="Enter physical address..."><%= hr.address || '' %></textarea>
+      </div>
+
+      <div class="col-12 d-flex gap-2 mt-4">
+        <button class="btn btn-primary btn-lg px-4"><i class="fa-solid fa-save me-1"></i> Save Changes</button>
+        <a href="/admin/view-hr" class="btn btn-outline-secondary btn-lg px-4">Cancel</a>
+      </div>
+    </form>
+  </div>
+</main>
+
+<%- include('../../partials/footer.ejs') %>
